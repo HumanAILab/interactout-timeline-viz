@@ -2,7 +2,8 @@
     "dependencies": {
         "bootstrap": "^5.2.3",
         "firebase": "^9.16.0",
-        "html-webpack-plugin": "^5.5.0"
+        "html-webpack-plugin": "^5.5.0",
+        "vis-timeline": "^7.7.0"
     },
     "name": "example.com",
     "version": "1.0.0",
