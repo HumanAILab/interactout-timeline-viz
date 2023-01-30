@@ -1,6 +1,6 @@
-# Example.com
+# InteractOut Timeline Visualization
 
-Example website.
+InteractOut timeline visualization.
 
 ## Prerequisites
 
@@ -23,8 +23,8 @@ These instructions will get you a copy of the project up and running on your loc
 Start with cloning this repo on your local machine:
 
 ```sh
-$ git clone https://github.com/Waley-Z/example.com.git
-$ cd example.com
+$ git clone https://github.com/Waley-Z/interactout-timeline-viz.git
+$ cd interactout-timeline-viz
 ```
 
 To install and set up the library, run:
@@ -51,15 +51,9 @@ This task will create a distribution version of the project inside your local `d
 
 ## Resources
 
+* [Cloud Firestore](https://firebase.google.com/docs/firestore)
+* [vis-timeline JS Library](https://github.com/visjs/vis-timeline)
 * [Bootstrap & Webpack](https://getbootstrap.com/docs/5.2/getting-started/webpack/)
 * [PurgeCSS](https://purgecss.com/plugins/postcss.html)
 * [HTML Webpack Plugin](https://github.com/jantimon/html-webpack-plugin)
 * [Webpack Production](https://webpack.js.org/guides/production/)
-
-## Built With
-
-TODO
-
-## Authors
-
-TODO
