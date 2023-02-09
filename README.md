@@ -53,6 +53,7 @@ This task will create a distribution version of the project inside your local `d
 
 * [Cloud Firestore](https://firebase.google.com/docs/firestore)
 * [vis-timeline JS Library](https://github.com/visjs/vis-timeline)
+* [FirebaseUI for Web](https://github.com/firebase/firebaseui-web/)
 * [Bootstrap & Webpack](https://getbootstrap.com/docs/5.2/getting-started/webpack/)
 * [PurgeCSS](https://purgecss.com/plugins/postcss.html)
 * [HTML Webpack Plugin](https://github.com/jantimon/html-webpack-plugin)
