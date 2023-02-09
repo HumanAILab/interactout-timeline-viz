@@ -91,3 +91,18 @@ $success: #7952b3;
 body {
   padding: 1.5rem;
 }
+
+.vis-item.tap {
+  // background-color: greenyellow;
+  border-color: #DB504A;
+}
+
+.vis-item.double_tap {
+  // background-color: greenyellow;
+  border-color: #E3B505;
+}
+
+.vis-item.swipe {
+  // background-color: greenyellow;
+  border-color: #084C61;
+}

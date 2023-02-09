@@ -1,18 +1,9 @@
 // Import our custom CSS
 import '../scss/styles.scss'
 
-// Import only the Bootstrap components we need
-import { Util, Dropdown, Offcanvas, Popover } from 'bootstrap';
-
-
-// Create an example popover
-document.querySelectorAll('[data-bs-toggle="popover"]')
-  .forEach(popover => {
-    new Popover(popover)
-  })
-
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+// import { initializeApp } from "firebase/app";
+import firebase from 'firebase/compat/app';
 import { getFirestore, collection, getDoc, getDocs, doc, onSnapshot } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -29,46 +20,74 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 
 
 
+import * as firebaseui from 'firebaseui'
+import 'firebaseui/dist/firebaseui.css'
+
+var uiConfig = {
+  signInFlow: 'popup',
+  signInOptions: [
+    // Leave the lines as is for the providers you want to offer your users.
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+  ],
+  // tosUrl and privacyPolicyUrl accept either url string or a callback
+  // function.
+  // Terms of service url/callback.
+  tosUrl: 'https://www.google.com',
+  // Privacy policy url/callback.
+  privacyPolicyUrl: function() {
+    window.location.assign('https://www.google.com');
+  },
+  callbacks: {
+    signInSuccessWithAuthResult: () => false
+  }
+};
+
+// Initialize the FirebaseUI Widget using Firebase.
+var ui = new firebaseui.auth.AuthUI(app.auth());
+// The start method will wait until the DOM is loaded.
+ui.start('#firebaseui-auth-container', uiConfig);
 
 
-import { Timeline, DataSet } from "vis-timeline/standalone";
+
+import { Timeline, DataSet } from "vis-timeline/standalone"; // esnext
 import { data } from 'autoprefixer';
 // DOM element where the Timeline will be attached
-var container = document.getElementById('visualization');
+var container = $('#visualization')[0];
 
 // Create a DataSet (allows two way data-binding)
-var items = new DataSet([
-  // {id: 1, content: 'item 1', start: '2014-04-20'},
-  // {id: 2, content: 'item 2', start: '2014-04-14'},
-  // {id: 3, content: 'item 3', start: '2014-04-18'},
-  // {id: 4, content: 'item 4', start: '2014-04-16', end: '2014-04-19'},
-  // {id: 5, content: 'item 5', start: '2014-04-25'},
-  // {id: 6, content: 'item 6', start: '2014-04-27', type: 'point'}
-]);
+var items = new DataSet([]);
 
 // Configuration for the Timeline
-var options = {};
+var options = {
+  // configure: true,
+  // start: new Date(),
+  end: new Date(),
+  loadingScreenTemplate: function () {
+    return "<h3>Loading...</h3>";
+  },
+  stack: false,
+};
 
 // Create a Timeline
 var timeline = new Timeline(container, items, options);
 
-// const querySnapshot = await getDocs(collection(db, "users"));
-// querySnapshot.forEach((doc) => {
-//   // doc.data() is never undefined for query doc snapshots
-//   console.log(doc.id, " => ", doc.data());
-// });
 
-const logsSnap = await getDocs(collection(db, "users", "test user 2", "logs"));
+
+const logsSnap = await getDocs(collection(db, "users", "test user 3", "logs_user_gestures"));
 logsSnap.forEach((doc) => {
   // doc.data() is never undefined for query doc snapshots
   data = doc.data();
-  console.log(doc.id, " => ", data);
-  timeline.itemsData.add({content: data.type, start: new Date(data.timestamp.seconds*1000), type: 'point'});
+  items.add({
+    start: new Date(data.timestamp.seconds*1000),
+    type: "point",
+    className: data.info.toLowerCase(),
+  });
 });
+
