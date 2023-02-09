@@ -1,5 +1,6 @@
 const miniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require("webpack");
 
 const path = require('path')
 
@@ -9,7 +10,11 @@ module.exports = {
     new miniCssExtractPlugin(),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
-    })
+    }),
+    new webpack.ProvidePlugin({
+      $: require.resolve('jquery'),
+      jQuery: require.resolve('jquery')
+    }),
   ],
   output: {
     filename: 'main.js',
@@ -18,7 +23,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(scss)$/,
+        test: /\.(sa|sc|c)ss$/,
         use: [
           {
             // Adds CSS to the DOM by injecting a `<style>` tag
