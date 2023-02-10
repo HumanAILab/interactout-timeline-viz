@@ -44,13 +44,19 @@
 
         <div id="user-signed-in" style="display: none;">
           <div class="d-flex flex-row align-items-baseline">
-            <div id="name"></div>
+            <div id="user-name"></div>
             <button type="button" class="btn btn-sm btn-outline-secondary mx-2" id="sign-out">Sign Out</button>
           </div>
 
           <hr class="col-1 my-5 mx-0">
 
           <h2>Visualization</h2>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="checkbox-stack" checked>
+            <label class="form-check-label" for="checkbox-stack">
+              Stack
+            </label>
+          </div>
           <div id="visualization"></div>
           <div id="selected-item" style="white-space: pre-wrap"></div>
         </div>

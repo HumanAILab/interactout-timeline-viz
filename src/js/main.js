@@ -1,9 +1,8 @@
 import {getUiConfig} from "./config.js";
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
-import { getFirestore, collection, getDoc, getDocs, doc, onSnapshot, query } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, query } from "firebase/firestore";
 import { Timeline, DataSet } from "vis-timeline/standalone"; // esnext
-import { data } from "jquery";
 
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(firebase.app());
@@ -28,7 +27,9 @@ var groups = ([
 ]);
 // Configuration for the Timeline
 var options = {
-  // configure: true,
+  // configure: function (option, path) {
+  //   return option === 'stack';
+  // },
   // start: new Date(),
   end: new Date(),
   loadingScreenTemplate: function () {
@@ -112,9 +113,9 @@ function getSystemEvents(user) {
  */
 var handleSignedInUser = function(user) {
   console.log('user signed in');
-  document.getElementById('user-signed-in').style.display = 'block';
-  document.getElementById('user-signed-out').style.display = 'none';
-  document.getElementById('name').textContent = `Hi, ${user.displayName}`;
+  $("#user-signed-in").show();
+  $("#user-signed-out").hide();
+  $("#user-name").text(`Hi, ${user.displayName}`);
 
   getUserGestures("test user 3");
   getUserActions("test user 3");
@@ -124,8 +125,8 @@ var handleSignedInUser = function(user) {
 // Displays the UI for a signed out user.
 var handleSignedOutUser = function() {
   console.log('user signed out');
-  document.getElementById('user-signed-in').style.display = 'none';
-  document.getElementById('user-signed-out').style.display = 'block';
+  $("#user-signed-in").hide();
+  $("#user-signed-out").show();
   // The start method will wait until the DOM is loaded.
   ui.start('#firebaseui-auth-container', getUiConfig());
 };
@@ -139,10 +140,17 @@ firebase.auth().onAuthStateChanged(function(user) {
 var initApp = function() {
   console.log('init app');
 
-  document.getElementById('sign-out').addEventListener('click', function() {
+  $("#sign-out").on("click", function () {
     console.log('sign out');
     firebase.auth().signOut();
   });
+
+  $("#checkbox-stack").on("change", function () {
+    console.log('stack changed');
+    timeline.setOptions({
+      stack: $(this).is(":checked")
+    });
+  })
 };
 
 initApp();
