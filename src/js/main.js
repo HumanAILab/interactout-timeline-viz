@@ -1,22 +1,31 @@
 import {getUiConfig} from "./config.js";
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
-import { getFirestore, collection, getDoc, getDocs, doc, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, getDoc, getDocs, doc, onSnapshot, query } from "firebase/firestore";
+import { Timeline, DataSet } from "vis-timeline/standalone"; // esnext
+import { data } from "jquery";
 
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(firebase.app());
 // Initialize the FirebaseUI Widget using Firebase.
 var ui = new firebaseui.auth.AuthUI(firebase.auth());
-ui.disableAutoSignIn();
 
-import { Timeline, DataSet } from "vis-timeline/standalone"; // esnext
-import { data } from 'autoprefixer';
+
+
 // DOM element where the Timeline will be attached
 var container = $('#visualization')[0];
-
 // Create a DataSet (allows two way data-binding)
 var items = new DataSet([]);
-
+var groups = ([
+  {
+    id: "logs_user_gestures",
+    content: 'User Gestures'
+  },
+  {
+    id: "logs_user_actions",
+    content: 'User Actions'
+  }
+]);
 // Configuration for the Timeline
 var options = {
   // configure: true,
@@ -25,24 +34,77 @@ var options = {
   loadingScreenTemplate: function () {
     return "<h3>Loading...</h3>";
   },
-  stack: false,
+  // stack: false,
 };
+var timeline =  new Timeline(container, items, groups, options);
+var selectedItem = $('#selected-item')[0];
+timeline.on('itemover', function (properties) {
+  let item = items.get(properties.item);
+  selectedItem.textContent = `Selected item:\n\tid:\t\t${item.id}\n\tgroup:\t${item.group}\n\tstart:\t${item.start}\n\tclass:\t${item.className}`;
+});
 
-// Create a Timeline
-var timeline = new Timeline(container, items, options);
+async function getLogs(logsRef, addItem) {
+  const q = query(logsRef);
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === "added") {
+        // console.log("New log: ", change.doc.data());
+        addItem(change.doc);
+      }
+    });
+  });
+}
+
+function getUserGestures(user) {
+  getLogs(
+    collection(db, "users", user, "logs_user_gestures"),
+    function (doc) {
+      let data = doc.data();
+      items.add({
+        id: doc.id,
+        start: new Date(data.timestamp.seconds*1000),
+        type: "point",
+        group: "logs_user_gestures",
+        className: data.info.toLowerCase(),
+        title: data.info.toLowerCase(),
+      });
+    }
+  );
+}
+
+function getUserActions(user) {
+  getLogs(
+    collection(db, "users", user, "logs_user_actions"),
+    function (doc) {
+      let data = doc.data();
+      items.add({
+        id: doc.id,
+        start: new Date(data.timestamp.seconds*1000),
+        type: "box",
+        group: "logs_user_actions",
+        className: data.info.toLowerCase(),
+        content: data.info.toLowerCase(),
+        title: data.info.toLowerCase(),
+      });
+    }
+  );
+}
+
+function getSystemEvents(user) {
+  getLogs(
+    collection(db, "users", user, "logs_system_events"),
+    function (doc) {
+      let data = doc.data();
+      timeline.addCustomTime(
+        new Date(data.timestamp.seconds*1000),
+        doc.id
+      );
+      timeline.setCustomTimeMarker(data.info.toLowerCase(), doc.id);
+    }
+  );
+}
 
 
-
-// const logsSnap = await getDocs(collection(db, "users", "test user 3", "logs_user_gestures"));
-// logsSnap.forEach((doc) => {
-//   // doc.data() is never undefined for query doc snapshots
-//   data = doc.data();
-//   items.add({
-//     start: new Date(data.timestamp.seconds*1000),
-//     type: "point",
-//     className: data.info.toLowerCase(),
-//   });
-// });
 
 /**
  * Displays the UI for a signed in user.
@@ -53,6 +115,10 @@ var handleSignedInUser = function(user) {
   document.getElementById('user-signed-in').style.display = 'block';
   document.getElementById('user-signed-out').style.display = 'none';
   document.getElementById('name').textContent = `Hi, ${user.displayName}`;
+
+  getUserGestures("test user 3");
+  getUserActions("test user 3");
+  getSystemEvents("test user 3");
 };
 
 // Displays the UI for a signed out user.
