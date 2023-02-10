@@ -18,7 +18,7 @@ module.exports = mergeWithRules({
   module: {
     rules: [
     {
-        test: /\.(scss)$/,
+        test: /\.(sa|sc|c)ss$/,
         use: [
         {
             // Loader for webpack to process CSS with PostCSS
