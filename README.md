@@ -49,6 +49,15 @@ $ npm run build
 
 This task will create a distribution version of the project inside your local `dist/` folder
 
+## Security
+
+Multiple levels of security checks are enforced in this web app.
+
+1. API key restrictions on [Google Cloud Platform](https://console.cloud.google.com/apis/credentials?authuser=1&project=endless-tractor-360801)
+2. Authorized domains on [Firebase Console](https://console.firebase.google.com/u/1/project/endless-tractor-360801/authentication/settings)
+3. Firebase [App Check](https://console.firebase.google.com/u/1/project/endless-tractor-360801/appcheck/apps) with public keys in `index.html`
+4. Firebase [Security Rules](https://console.firebase.google.com/u/1/project/endless-tractor-360801/firestore/rules)
+
 ## Resources
 
 * [Cloud Firestore](https://firebase.google.com/docs/firestore)
