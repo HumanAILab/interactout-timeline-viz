@@ -27,9 +27,9 @@ module.exports = mergeWithRules({
               postcssOptions: {
                 plugins: [
                   ["autoprefixer"],
-                  purgecss({
-                      content: ['./**/*.html']
-                  })
+                  // purgecss({
+                  //     content: ['./**/*.html']
+                  // })
                 ]
               }
             }
