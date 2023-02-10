@@ -106,3 +106,15 @@ body {
   // background-color: greenyellow;
   border-color: #084C61;
 }
+
+.vis-item.vis-background.enter_app {
+  background-color: rgba(107, 164, 242, 0.2);
+}
+
+.vis-item.vis-background.enter_home {
+  background-color: rgba(111, 208, 252, 0.2);
+}
+
+.vis-item.vis-background.screen_off {
+  background-color: rgba(112, 224, 230, 0.2);
+}

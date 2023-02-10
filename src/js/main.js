@@ -100,11 +100,37 @@ function getSystemEvents(user) {
         new Date(data.timestamp.seconds*1000),
         doc.id
       );
+      timeline.customTimes[timeline.customTimes.length-1].hammer.off("panstart panmove panend");
       timeline.setCustomTimeMarker(data.info.toLowerCase(), doc.id);
     }
   );
 }
 
+var lastStateChangeId = null;
+
+function getStateChanges(user) {
+  getLogs(
+    collection(db, "users", user, "logs_state_changes"),
+    function (doc) {
+      let data = doc.data();
+      items.add({
+        id: doc.id,
+        start: new Date(data.timestamp.seconds*1000),
+        end: Date.now(),
+        type: "background",
+        className: data.info.toLowerCase(),
+        content: data.info.toLowerCase() + (data.hasOwnProperty("app_name") ? ": " + data.app_name : ""),
+      });
+      if (lastStateChangeId) {
+        items.update({
+          id: lastStateChangeId,
+          end: new Date(data.timestamp.seconds*1000),
+        });
+      }
+      lastStateChangeId = doc.id;
+    }
+  );
+}
 
 
 /**
@@ -120,6 +146,7 @@ var handleSignedInUser = function(user) {
   getUserGestures("test user 3");
   getUserActions("test user 3");
   getSystemEvents("test user 3");
+  getStateChanges("test user 3");
 };
 
 // Displays the UI for a signed out user.
@@ -151,6 +178,15 @@ var initApp = function() {
       stack: $(this).is(":checked")
     });
   })
+
+  window.setInterval(function(){
+    if (lastStateChangeId) {
+      items.update({
+        id: lastStateChangeId,
+        end: Date.now(),
+      });
+    }
+  }, 1000);
 };
 
 initApp();
