@@ -107,7 +107,11 @@ body {
   border-color: #084C61;
 }
 
-.vis-item.vis-background.enter_app {
+.vis-item.vis-background.enter_app_target {
+  background-color: rgba(253, 178, 124, 0.4);
+}
+
+.vis-item.vis-background.enter_app_non_target {
   background-color: rgba(124, 253, 169, 0.4);
 }
 

@@ -118,6 +118,7 @@ function getStateChanges(user) {
     function (doc) {
       let data = doc.data();
       var content = "";
+      var className = data.info.toLowerCase();
       switch (data.info.toLowerCase()) {
         case "screen_off":
           content = "Off";
@@ -127,6 +128,7 @@ function getStateChanges(user) {
           break;
         case "enter_app":
           content = data.app_name;
+          className += data.is_target ? "_target" : "_non_target";
           break;
         default:
           return;
@@ -136,7 +138,7 @@ function getStateChanges(user) {
         start: new Date(data.timestamp.seconds*1000),
         end: Date.now(),
         type: "background",
-        className: data.info.toLowerCase(),
+        className: className,
         content: content,
       });
       if (lastStateChangeId) {
