@@ -54,6 +54,18 @@
           <hr class="col-1 my-5 mx-0">
 
           <h2>Visualization</h2>
+          <select class="form-select" aria-label="User select" id="user-select">
+            <option selected>Select user</option>
+          </select>
+
+          <select class="form-select" aria-label="Time range" id="time-range">
+            <option selected value="1">1 hr</option>
+            <option value="3">3 hrs</option>
+            <option value="6">6 hrs</option>
+            <option value="12">12 hrs</option>
+            <option value="24">24 hrs</option>
+          </select>
+
           <div class="form-check mb-2">
             <input class="form-check-input" type="checkbox" value="" id="checkbox-stack" checked>
             <label class="form-check-label" for="checkbox-stack">

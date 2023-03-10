@@ -1,7 +1,7 @@
 import {getUiConfig} from "./config.js";
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
-import { getFirestore, collection, onSnapshot, query } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, query, orderBy, where, getDocs } from "firebase/firestore";
 import { Timeline, DataSet } from "vis-timeline/standalone"; // esnext
 
 // Initialize Cloud Firestore and get a reference to the service
@@ -45,12 +45,15 @@ timeline.on('itemover', function (properties) {
 });
 
 async function getLogs(logsRef, addItem) {
-  const q = query(logsRef);
+  var queryStartDate = new Date();
+  queryStartDate.setHours(queryStartDate.getHours() - $('#time-range').val());
+  const q = query(logsRef, where("timestamp", ">", queryStartDate), orderBy("timestamp", "asc"));
   const unsubscribe = onSnapshot(q, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === "added") {
         // console.log("New log: ", change.doc.data());
         addItem(change.doc);
+        timeline.fit();
       }
     });
   });
@@ -113,13 +116,27 @@ function getStateChanges(user) {
     collection(db, "users", user, "logs_state_changes"),
     function (doc) {
       let data = doc.data();
+      var content = "";
+      switch (data.info.toLowerCase()) {
+        case "screen_off":
+          content = "Off";
+          break;
+        case "enter_home":
+          content = "Home";
+          break;
+        case "enter_app":
+          content = data.app_name;
+          break;
+        default:
+          return;
+      }
       items.add({
         id: doc.id,
         start: new Date(data.timestamp.seconds*1000),
         end: Date.now(),
         type: "background",
         className: data.info.toLowerCase(),
-        content: data.info.toLowerCase() + (data.hasOwnProperty("app_name") ? ": " + data.app_name : ""),
+        content: content,
       });
       if (lastStateChangeId) {
         items.update({
@@ -143,11 +160,35 @@ var handleSignedInUser = function(user) {
   $("#user-signed-out").hide();
   $("#user-name").text(`Hi, ${user.displayName}`);
 
-  getUserGestures("test user 3");
-  getUserActions("test user 3");
-  getSystemEvents("test user 3");
-  getStateChanges("test user 3");
+  getUsers();
 };
+
+async function getUsers() {
+  const q = query(collection(db, "users"));
+  const querySnapShot = await getDocs(q);
+  querySnapShot.forEach((doc) => {
+    $("#user-select").append(`<option value="${doc.id}">${doc.id}</option>`);
+  });
+}
+
+function redraw() {
+  items.clear();
+  lastStateChangeId = null;
+
+  var username = $('#user-select').val();
+  getUserGestures(username);
+  getUserActions(username);
+  getSystemEvents(username);
+  getStateChanges(username);
+}
+
+$('#user-select').on('change', function(){
+  redraw();
+})
+
+$('#time-range').on('change', function(){
+  redraw();
+})
 
 // Displays the UI for a signed out user.
 var handleSignedOutUser = function() {
