@@ -43,6 +43,7 @@ timeline.on('itemover', function (properties) {
   let item = items.get(properties.item);
   selectedItem.textContent = `Selected item:\n\tid:\t\t${item.id}\n\tgroup:\t${item.group}\n\tstart:\t${item.start}\n\tclass:\t${item.className}`;
 });
+var unsubscribes = [];
 
 async function getLogs(logsRef, addItem) {
   var queryStartDate = new Date();
@@ -58,6 +59,7 @@ async function getLogs(logsRef, addItem) {
       }
     });
   });
+  unsubscribes.push(unsubscribe);
 }
 
 function getUserGestures(user) {
@@ -175,6 +177,10 @@ async function getUsers() {
 }
 
 function redraw() {
+  unsubscribes.forEach((unsubscribe) => {
+    unsubscribe();
+  });
+  unsubscribes = [];
   items.clear();
   lastStateChangeId = null;
 
