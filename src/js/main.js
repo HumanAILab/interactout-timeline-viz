@@ -53,7 +53,8 @@ async function getLogs(logsRef, addItem) {
       if (change.type === "added") {
         // console.log("New log: ", change.doc.data());
         addItem(change.doc);
-        timeline.fit();
+        if ($("#checkbox-fit").is(":checked"))
+          timeline.fit();
       }
     });
   });
@@ -218,6 +219,11 @@ var initApp = function() {
     timeline.setOptions({
       stack: $(this).is(":checked")
     });
+  })
+
+  $("#checkbox-fit").on("change", function () {
+    if ($(this).is(":checked"))
+      timeline.fit();
   })
 
   window.setInterval(function(){
