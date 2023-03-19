@@ -62,6 +62,8 @@ Multiple levels of security checks are enforced in this web app.
 
 * [Cloud Firestore](https://firebase.google.com/docs/firestore)
 * [vis-timeline JS Library](https://github.com/visjs/vis-timeline)
+* [Observable Plot](https://github.com/observablehq/plot)
+* [Date Range Picker](https://github.com/dangrossman/daterangepicker)
 * [FirebaseUI for Web](https://github.com/firebase/firebaseui-web/)
 * [Bootstrap & Webpack](https://getbootstrap.com/docs/5.2/getting-started/webpack/)
 * [PurgeCSS](https://purgecss.com/plugins/postcss.html)

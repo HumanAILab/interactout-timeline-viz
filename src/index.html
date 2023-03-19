@@ -53,12 +53,12 @@
 
           <hr class="col-1 my-5 mx-0">
 
-          <h2>Visualization</h2>
-          <select class="form-select" aria-label="User select" id="user-select">
+          <h2>Timeline</h2>
+          <select class="form-select" aria-label="User select" id="user-select-timeline">
             <option selected>Select user</option>
           </select>
 
-          <select class="form-select" aria-label="Time range" id="time-range">
+          <select class="form-select" aria-label="Time range" id="time-range-timeline">
             <option selected value="1">1 hr</option>
             <option value="3">3 hrs</option>
             <option value="6">6 hrs</option>
@@ -77,8 +77,19 @@
               Fit
             </label>
           </div>
-          <div id="visualization"></div>
+          <div id="timeline"></div>
           <div id="selected-item" style="white-space: pre-wrap"></div>
+
+          <h2 class="mt-3">Usage</h2>
+          <select class="form-select" aria-label="User select" id="user-select-usage">
+            <option selected>Select user</option>
+          </select>
+
+          <input type="text" name="daterange"/>
+
+          <div id="usage">
+          </div> 
+
         </div>
 
         <hr class="mt-5 mb-4">
