@@ -233,12 +233,23 @@ async function getUserUsage(start, end) {
   // process query
   var usageItems = new DataSet([]);
   var lastUsageStateChangeId = null;
+  var appFreq = {};
+  var appIsTarget = {};
   querySnapshot.forEach((doc) => {
     // console.log(doc.id, " => ", doc.data());
     // doc.data() is never undefined for query doc snapshots
     var id = processStateChange(doc, usageItems, end, lastUsageStateChangeId);
     if (id != -1) {
       lastUsageStateChangeId = id;
+    }
+    // count frequency
+    let data = doc.data();
+    if (data.info.toLowerCase() == "enter_app") {
+      if (!(data.app_name in appFreq)) {
+        appFreq[data.app_name] = 0; // init to 0
+      }
+      appFreq[data.app_name] += 1;
+      appIsTarget[data.app_name] = data.is_target;
     }
   });
 
@@ -257,11 +268,16 @@ async function getUserUsage(start, end) {
   console.log(usageDict);
 
   // transform to object array
-  var usageArray = Object.keys(usageDict).map(function (key) {
-    return { "app": key, "usageInHour": usageDict[key] / 3600 };
+  var appArray = Object.keys(usageDict).map(function (key) {
+    return {
+      "app": key,
+      "usageInHour": usageDict[key] / 3600,
+      "freq": appFreq[key],
+      "isTarget": appIsTarget[key]
+    };
   });
-  console.log(usageArray);
-  return usageArray;
+  console.log(appArray);
+  return appArray;
 }
 
 $('input[name="daterange"]').daterangepicker({
@@ -280,16 +296,14 @@ function plotUsage(data) {
       x: {
         label: "Usage (hour)",
         grid: true,
-        text: d => d.toFixed(2),
       },
       y: {
         domain: d3.sort(data, d => -d.usageInHour).map(d => d.app),
         label: "",
       },
       marks: [
-        Plot.barX(data, { x: "usageInHour", y: "app" }),
-        Plot.text(data, { x: "usageInHour", y: "app", text: d => d.usageInHour.toFixed(2), dx: 20}),
-        // Plot.ruleX([0])
+        Plot.barX(data, { x: "usageInHour", y: "app", fill: d => d.isTarget ? "#D6BCAB" : "#7C8A83" }),
+        Plot.text(data, { x: "usageInHour", y: "app", text: d => d.usageInHour.toFixed(2), dx: 20 }),
       ],
       marginLeft: 120,
       marginRight: 60,
@@ -298,7 +312,31 @@ function plotUsage(data) {
       style: {
         fontSize: 12,
       },
-      width: 720,
+      width: 800,
+    })
+  );
+  $("#usage").append(
+    Plot.plot({
+      x: {
+        label: "Open Frequency",
+        grid: true,
+      },
+      y: {
+        domain: d3.sort(data, d => -d.freq).map(d => d.app),
+        label: "",
+      },
+      marks: [
+        Plot.barX(data, { x: "freq", y: "app", fill: d => d.isTarget ? "#D6BCAB" : "#7C8A83" }),
+        Plot.text(data, { x: "freq", y: "app", text: d => d.freq, dx: 12 }),
+      ],
+      marginLeft: 120,
+      marginRight: 60,
+      insetLeft: 5,
+      insetBottom: 0,
+      style: {
+        fontSize: 12,
+      },
+      width: 800,
     })
   );
 }
