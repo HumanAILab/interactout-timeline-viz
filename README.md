@@ -1,6 +1,10 @@
 # InteractOut Timeline Visualization
 
-InteractOut timeline visualization.
+This interactive tool is designed to assist researchers and analysts in monitoring and understanding user behavior within the [InteractOut app](https://github.com/Waley-Z/InteractOut). Through real-time data collection and visual analytics, this web app offers a comprehensive view of user interactions and app usage patterns, providing insights for lab and field studies.
+
+![Timeline](./images/timeline.PNG)
+
+![Usage](./images/usage.PNG)
 
 ## Prerequisites
 
